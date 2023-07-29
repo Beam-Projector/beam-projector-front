@@ -1,18 +1,30 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { styled } from "styled-components";
-import icon from "../../assets/stick.gif";
+// import icon from "../../assets/stick.gif";
+import icon from "../../assets/stick2.gif";
 import { axiosClient } from "../../api/axiosClients";
+import { AuthContext } from "../../context/AuthContext";
 
-const Comment = ({ commentNum, boardNum, nickName, comments, createAt }) => {
+const Comment = ({
+  commentNum,
+  boardNum,
+  nickName,
+  comments,
+  createAt,
+  onDelete,
+}) => {
   const [mode, setMode] = useState(true);
   const [comment, setComment] = useState(comments);
+  const data = useContext(AuthContext);
+  const { userInfo } = data !== null && data;
 
-  const commentFix = () => {
-    axiosClient.put("/api/comments", {
+  const fixComment = () => {
+    const data = {
       commentNum,
       boardNum,
       comments: comment,
-    });
+    };
+    axiosClient.put("/comments/", data);
     setMode(true);
   };
 
@@ -27,8 +39,12 @@ const Comment = ({ commentNum, boardNum, nickName, comments, createAt }) => {
           </UserWrapper>
         </ProfileWrapper>
         <BtnWrapper>
-          <CommentBtn onClick={() => setMode(false)}>수정</CommentBtn>
-          <CommentBtn>삭제</CommentBtn>
+          {nickName === userInfo?.nickName && (
+            <>
+              <CommentBtn onClick={() => setMode(false)}>수정</CommentBtn>
+              <CommentBtn onClick={() => onDelete(commentNum)}>삭제</CommentBtn>
+            </>
+          )}
         </BtnWrapper>
       </CommentHeader>
       {!mode ? (
@@ -38,7 +54,7 @@ const Comment = ({ commentNum, boardNum, nickName, comments, createAt }) => {
             onChange={({ target }) => setComment(target.value)}
           />
           <FixModeBtnWrapper>
-            <ModeBtn onClick={() => commentFix()}>수정 완료</ModeBtn>
+            <ModeBtn onClick={() => fixComment()}>수정 완료</ModeBtn>
             <ModeBtn active={"false"} onClick={() => setMode(true)}>
               취소
             </ModeBtn>

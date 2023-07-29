@@ -1,6 +1,7 @@
 import ReactQuill, { Quill } from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import ImageResize from "quill-image-resize-module-react";
+import { useRef, useEffect } from "react";
 
 Quill.register("modules/imageResize", ImageResize);
 
@@ -90,16 +91,61 @@ const modules = {
 };
 
 const Editor = ({ value, setValue }) => {
+  const quillRef = useRef(null);
+
+  useEffect(() => {
+    if (quillRef != null && quillRef.current != null) {
+      const quill = quillRef.current.getEditor();
+      const toolbar = quill.getModule("toolbar");
+      toolbar.addHandler("image", () => {
+        document.querySelector(".input-image-upload").click();
+      });
+    }
+  }, []);
+
+  const handleImageUpload = (file) => {
+    const formData = new FormData();
+    formData.append("api_key", "618146626818528");
+    formData.append("upload_preset", "hoh2g1dm");
+    formData.append("file", file);
+
+    fetch(`https://api.cloudinary.com/v1_1/ji/image/upload`, {
+      method: "POST",
+      body: formData,
+    })
+      .then((response) => response.json())
+      .then((response) => {
+        if (response.url) {
+          const quill = quillRef.current.getEditor();
+          const range = quill.getSelection();
+          quill.insertEmbed(range.index, "image", response.url);
+        }
+      })
+      .catch((error) => console.error("Error:", error));
+  };
+
   return (
-    <ReactQuill
-      theme="snow"
-      value={value}
-      onChange={setValue}
-      modules={modules}
-      formats={formats}
-      className="quill-editor"
-      placeholder={"프로젝트 소개를 입력해주세요"}
-    />
+    <>
+      <ReactQuill
+        theme="snow"
+        value={value}
+        onChange={setValue}
+        modules={modules}
+        formats={formats}
+        className="quill-editor"
+        placeholder={"프로젝트 소개를 입력해주세요"}
+        preserveWhitespace
+        ref={quillRef}
+      />
+      <input
+        type="file"
+        accept="image/*"
+        className="input-image-upload"
+        tabIndex="-1"
+        style={{ display: "none" }}
+        onChange={(e) => handleImageUpload(e.target.files[0])}
+      />
+    </>
   );
 };
 

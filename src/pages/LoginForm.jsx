@@ -1,17 +1,13 @@
 import { useState, useRef } from "react";
 import { styled } from "styled-components";
 import { useNavigate } from "react-router-dom";
-import axios from 'axios';
-
-
+import axios from "axios";
 
 function LoginForm() {
   const navigate = useNavigate();
 
   const [idFocus, setIdFocus] = useState(false);
   const [passwordfocus, setPassWordFocus] = useState(false);
-
-
 
   //아이디인풋창을 클릭하면 아이콘사라지게하기
   const inputIdFocus = () => setIdFocus(true);
@@ -44,20 +40,24 @@ function LoginForm() {
 
   // 로그인요청하기
   const Login = () => {
-    axios.post('http://43.202.4.184:8080/login', {
-      memberId: idRef.current.value,
-      password: passwordRef.current.value,
-    }, {
-      headers: {
-        "Content-Type": "application/json",
-      }
-    }
-    ).then(function (response) {
-      localStorage.setItem('access_token', JSON.stringify(response.data))
-      navigate("/")
-
-
-    })
+    axios
+      .post(
+        "http://43.202.4.184:8080/login",
+        {
+          memberId: idRef.current.value,
+          password: passwordRef.current.value,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      )
+      .then(function (response) {
+        localStorage.setItem("access_token", JSON.stringify(response.data));
+        navigate("/");
+        location.reload();
+      })
       .catch(function (error) {
         console.log(error);
       });
@@ -69,24 +69,41 @@ function LoginForm() {
         <SignupTitle>LOGIN</SignupTitle>
         <InputBox>
           <FlexDiv>
-            {!idFocus ?
+            {!idFocus ? (
               <InputIconIdDiv>
                 <InputIconImage src="/src/assets/user.svg"></InputIconImage>
                 <InputIconText htmlFor="id">ID</InputIconText>
-              </InputIconIdDiv> : ''
-            }
+              </InputIconIdDiv>
+            ) : (
+              ""
+            )}
 
-            <Input name="id" id="id" ref={idRef} onFocus={inputIdFocus} onBlur={inputIdBlur} />
+            <Input
+              name="id"
+              id="id"
+              ref={idRef}
+              onFocus={inputIdFocus}
+              onBlur={inputIdBlur}
+            />
           </FlexDiv>
 
           <FlexDiv>
-            {passwordfocus === false ?
+            {passwordfocus === false ? (
               <InputIconPassWordDiv>
                 <InputIconImage src="/src/assets/lock.svg"></InputIconImage>
                 <InputIconText htmlFor="password">password</InputIconText>
-              </InputIconPassWordDiv> : ''
-            }
-            <Input name="password" id="password" ref={passwordRef} type="password" onFocus={inputPassWordFocus} onBlur={inputPassWordBlur} />
+              </InputIconPassWordDiv>
+            ) : (
+              ""
+            )}
+            <Input
+              name="password"
+              id="password"
+              ref={passwordRef}
+              type="password"
+              onFocus={inputPassWordFocus}
+              onBlur={inputPassWordBlur}
+            />
           </FlexDiv>
 
           <ForgetIdPassword>

@@ -9,33 +9,48 @@ import Comment from "../components/Comment/Comment";
 import { axiosClient } from "../api/axiosClients";
 
 const tmp =
-  "<p>아아아아아아 너무 힘드러</p><p><br></p><p><strong>ㅠㅠㅠㅠ</strong></p><p><em><u>asdasdasdasd</u></em></p><p><strong><em><u>살려주세요</u></em></strong></p>";
+  "<p>아아아아아아 너무 힘드러</p><p><br></p><p><strong>ㅠㅠㅠㅠ</strong></p><p><em><u>asdasdasdasd</u></em></p><p><strong><em><u>살려주세요</u></em></strong></p><p><img src='http://res.cloudinary.com/ji/image/upload/v1690585633/mpswofgsjges5f1azpba.png' width='198' style=''> 이미지 올렸다?</p>";
 
 const Post = () => {
   const navigate = useNavigate();
   const { id } = useParams();
   const [comment, setComment] = useState("");
   const [comments, setComments] = useState([
-    {
-      memberNum: 1, // 토큰에서 memberNum 가져와야한다.
-      boardNum: id,
-      commentNum: 1,
-      nickName: "프론트엔드 마스터",
-      comments: "댓글 테스트",
-      createAt: "2023-07-25T00:00:00",
-    },
+    // {
+    //   memberNum: 1, // 토큰에서 memberNum 가져와야한다.
+    //   boardNum: id,
+    //   commentNum: 1,
+    //   nickName: "프론트엔드 마스터",
+    //   comments: "댓글 테스트",
+    //   createAt: "2023-07-25T00:00:00",
+    // },
   ]);
-
   const moveToBack = () => {
     navigate(-1);
   };
 
+  const postComment = () => {
+    axiosClient
+      .post("/comments/", {
+        comments: comment,
+        boardNum: id,
+      })
+      .then((res) => {
+        setComments((prev) => [...prev, res]);
+        setComment("");
+      });
+  };
+
+  const deleteComment = (commentNum) => {
+    axiosClient.delete(`/comments/?commentNum=${commentNum}`).then(() => {
+      setComments((prev) => prev.filter((e) => e.commentNum !== commentNum));
+    });
+  };
+
   useEffect(() => {
     axiosClient
-      .get(`/api/comments?boardNum=${id}`)
-      .then((res) => {
-        console.log(res.json());
-      })
+      .get(`/comments/?boardNum=${id}`)
+      .then(setComments)
       .catch(console.log);
   }, []);
 
@@ -83,7 +98,7 @@ const Post = () => {
             value={comment}
             onChange={({ target }) => setComment(target.value)}
           />
-          <CommentSubmit>댓글 등록</CommentSubmit>
+          <CommentSubmit onClick={() => postComment()}>댓글 등록</CommentSubmit>
         </CommentWrapper>
         <CommentLists>
           {comments.map(({ commentNum, ...rest }) => (
@@ -91,6 +106,7 @@ const Post = () => {
               key={commentNum}
               commentNum={commentNum}
               boardNum={id}
+              onDelete={deleteComment}
               {...rest}
             />
           ))}

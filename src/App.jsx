@@ -14,14 +14,7 @@ import Post from "./pages/Post";
 
 import MemberUpdateForm from "./components/common/MemberUpdateForm";
 
-
-
-
-
-
-
 function App() {
-
   const router = [
     { path: "/", element: <Home /> },
     {

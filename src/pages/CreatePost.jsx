@@ -21,17 +21,17 @@ const CreatePost = () => {
 
   const submitPost = () => {
     const body = removePTags(content);
-    // console.log(body);
-    axiosClient
-      .post("/board/save", {
-        title,
-        content: body,
-        categoryName: "",
-        disclosure: "",
-      })
-      .then((result) => {
-        console.log(result);
-      });
+    console.log(body);
+    // axiosClient
+    //   .post("/board/save", {
+    //     title,
+    //     content: body,
+    //     categoryName: "",
+    //     disclosure: "",
+    //   })
+    //   .then((result) => {
+    //     console.log(result);
+    //   });
   };
 
   return (
@@ -148,6 +148,7 @@ const GlobalStyle = createGlobalStyle`
 
     .ql-container {
     /* border: none; 에디터의 테두리를 없애는 설정 */
+
     }
 
   }

@@ -47,7 +47,7 @@ const CardList = styled.li`
   width: 280px;
   height: 340px;
   border-radius: 30px;
-  margin-bottom: 40px;
+  /* margin-bottom: 40px; */
   overflow: hidden;
   padding: 20px;
   cursor: pointer;

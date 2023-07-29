@@ -1,11 +1,21 @@
+import { useContext } from "react";
+import { Link } from "react-router-dom";
 import styled from "styled-components";
-// import logo from "../../assets/logo.png";
+import { AuthContext } from "../../context/AuthContext";
 import stick from "../../assets/stick.gif";
 import NavMenu from "./NavMenu";
 import NavIcon from "./NavIcon";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const Header = () => {
+  const navigate = useNavigate();
+  const userInfo = useContext(AuthContext);
+  const logOut = () => {
+    navigate("/");
+    localStorage.removeItem("access_token");
+    location.reload();
+  };
+
   return (
     <HeaderCompo>
       <LogoWrapper>
@@ -18,7 +28,13 @@ const Header = () => {
           <NavMenu path={"/about"}>We&apos;re</NavMenu>
           <NavMenu path={"/board"}>Board</NavMenu>
           <NavMenu path={"/ranking"}>Ranking</NavMenu>
-          <NavMenu path={"/login"}>Login</NavMenu>
+          {!userInfo ? (
+            <NavMenu path={"/login"}>Login</NavMenu>
+          ) : (
+            <NavMenu onClick={() => logOut()} style={{ fontWeight: "bold" }}>
+              LogOut
+            </NavMenu>
+          )}
         </NavUl>
       </CenterNav>
       <NavIcons>
