@@ -3,17 +3,20 @@ import { IoPlayBackOutline } from "react-icons/io5";
 // import { PiThumbsUp } from "react-icons/pi";
 import { CgPacman } from "react-icons/cg";
 import { BsEye } from "react-icons/bs";
-import { useNavigate, useParams } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useNavigate, useParams, useLocation } from "react-router-dom";
+import { useEffect, useState, useContext } from "react";
 import Comment from "../components/Comment/Comment";
 import { axiosClient } from "../api/axiosClients";
-
-const tmp =
-  "<p>아아아아아아 너무 힘드러</p><p><br></p><p><strong>ㅠㅠㅠㅠ</strong></p><p><em><u>asdasdasdasd</u></em></p><p><strong><em><u>살려주세요</u></em></strong></p><p><img src='http://res.cloudinary.com/ji/image/upload/v1690585633/mpswofgsjges5f1azpba.png' width='198' style=''> 이미지 올렸다?</p>";
+import { AuthContext } from "../context/AuthContext";
+import { useRecoilState } from "recoil";
+import { PostAtom } from "../context/atoms";
 
 const Post = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { id } = useParams();
+  const [post, setPost] = useRecoilState(PostAtom);
+  const { userInfo } = useContext(AuthContext);
   const [comment, setComment] = useState("");
   const [comments, setComments] = useState([
     // {
@@ -25,6 +28,7 @@ const Post = () => {
     //   createAt: "2023-07-25T00:00:00",
     // },
   ]);
+
   const moveToBack = () => {
     navigate(-1);
   };
@@ -38,7 +42,8 @@ const Post = () => {
       .then((res) => {
         setComments((prev) => [...prev, res]);
         setComment("");
-      });
+      })
+      .catch(console.log);
   };
 
   const deleteComment = (commentNum) => {
@@ -47,12 +52,24 @@ const Post = () => {
     });
   };
 
-  useEffect(() => {
+  const fetchData = () => {
+    axiosClient
+      .get(`/boards/${id}`)
+      .then((res) => {
+        setPost(res);
+      })
+      .then(console.log);
+
     axiosClient
       .get(`/comments/?boardNum=${id}`)
       .then(setComments)
       .catch(console.log);
-  }, []);
+  };
+
+  useEffect(() => {
+    console.log("페이지전환");
+    fetchData();
+  }, [id, location]);
 
   return (
     <>
@@ -60,18 +77,18 @@ const Post = () => {
         <IoPlayBackOutline />
       </BtnBack>
       <Layout>
-        <PostTitle>포스트입니다.안녕하암난마나나나나나나</PostTitle>
+        <PostTitle>{post?.title}</PostTitle>
         <UserInfo>
           <UserLogo>
             <CgPacman />
           </UserLogo>
-          <UserName>프론트엔드 마스터</UserName>
-          <CreatedDate>2023.07.27</CreatedDate>
+          <UserName>{userInfo?.nickName}</UserName>
+          <CreatedDate>{post.createAt?.replace("T", " ")}</CreatedDate>
           <HitWrapper>
             <HitTitles>
               <BsEye />
             </HitTitles>
-            <HitCount>22</HitCount>
+            <HitCount>{post.boardHits}</HitCount>
           </HitWrapper>
         </UserInfo>
         <ProjectInfoWrapper>
@@ -87,7 +104,7 @@ const Post = () => {
           </InfoUl>
         </ProjectInfoWrapper>
         <DescTitle>프로젝트 소개</DescTitle>
-        <Content dangerouslySetInnerHTML={{ __html: tmp }}></Content>
+        <Content dangerouslySetInnerHTML={{ __html: post.content }}></Content>
         <CommentWrapper>
           <ComTitleWrapper>
             <CommentTitles>댓글</CommentTitles>

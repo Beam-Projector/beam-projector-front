@@ -5,14 +5,17 @@ import "./index.css";
 import GlobalStyleComponent from "./styles/GlobalStyles.jsx";
 import { BrowserRouter } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext.jsx";
+import { RecoilRoot } from "recoil";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
-    <AuthProvider>
-      <GlobalStyleComponent />
-      <BrowserRouter>
-        <App />
-      </BrowserRouter>
-    </AuthProvider>
+    <RecoilRoot>
+      <AuthProvider>
+        <GlobalStyleComponent />
+        <BrowserRouter>
+          <App />
+        </BrowserRouter>
+      </AuthProvider>
+    </RecoilRoot>
   </React.StrictMode>
 );

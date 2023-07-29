@@ -4,7 +4,7 @@ import Heart from "../../assets/heart.svg";
 import Logo from "../../assets/projet-logo2.svg";
 import StackIcon from "./StackIcon";
 
-const BoardCard = ({ onClick }) => {
+const BoardCard = ({ title, boardHits, createAt, onClick }) => {
   return (
     <CardList onClick={onClick}>
       <CategoryWrapper>
@@ -13,9 +13,9 @@ const BoardCard = ({ onClick }) => {
       </CategoryWrapper>
       <DateWrapper>
         <DateP>[등록일]</DateP>
-        <DateP>{"2023.07.27"}</DateP>
+        <DateP>{createAt.substring(0, 10)}</DateP>
       </DateWrapper>
-      <TitleH1>{"프로젝트 1조 포트폴리오 입니다.!"}</TitleH1>
+      <TitleH1>{title}</TitleH1>
       <StackWrapper>
         <StackTitle>Stacks</StackTitle>
         <StackLists>
@@ -29,7 +29,7 @@ const BoardCard = ({ onClick }) => {
       <FooterWrapper>
         <LikesWrapper>
           <ThumbsUp src={Heart} />
-          <CountSpan>{"100"}</CountSpan>
+          <CountSpan>{boardHits}</CountSpan>
         </LikesWrapper>
         <NameWrapper>
           <ProfileLogo src={"profileImg.png"} />

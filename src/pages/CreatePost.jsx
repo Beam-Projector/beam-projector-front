@@ -4,34 +4,27 @@ import Editor from "../components/Editor";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { axiosClient } from "../api/axiosClients";
+import { useRecoilState } from "recoil";
+import { PostAtom } from "../context/atoms";
 
 const CreatePost = () => {
   const [content, setContent] = useState("");
   const [title, setTitle] = useState("");
   const navigate = useNavigate();
-
-  function removePTags(content) {
-    // <p> 태그를 제거하고 <br>로 연결합니다.
-    console.log(content);
-    return content
-      .replace(/<p>/g, "")
-      .replace(/<\/p>/g, "")
-      .replace(/<br>/g, "");
-  }
+  const [post, setPost] = useRecoilState(PostAtom);
 
   const submitPost = () => {
-    const body = removePTags(content);
-    console.log(body);
-    // axiosClient
-    //   .post("/board/save", {
-    //     title,
-    //     content: body,
-    //     categoryName: "",
-    //     disclosure: "",
-    //   })
-    //   .then((result) => {
-    //     console.log(result);
-    //   });
+    axiosClient
+      .post("/boards/save", {
+        title,
+        content,
+        categoryName: "",
+        disclosure: "",
+      })
+      .then((result) => {
+        navigate(`/board/${result.boardNum}`);
+        setPost(result);
+      });
   };
 
   return (

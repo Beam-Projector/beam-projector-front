@@ -29,8 +29,8 @@ const NavList = styled(NavLink)`
   }
 `;
 
-const LogOutBtn = styled.button`
-  font-weight: 400;
-  font-size: 22px;
-  vertical-align: baseline;
-`;
+// const LogOutBtn = styled.button`
+//   font-weight: 400;
+//   font-size: 22px;
+//   vertical-align: baseline;
+// `;
